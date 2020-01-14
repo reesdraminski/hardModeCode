@@ -6,6 +6,8 @@ const CODE_EXECUTION_LIMIT = 5000;
 const JAVASCRIPT = "javascript";
 const PYTHON = "python";
 
+// imports for advanced node functionality
+const path = require('path');
 const fs = require('fs');
 const child_process = require('child_process');
 
@@ -135,7 +137,7 @@ app.post("/submit", (req, res) => {
         // if there is errors, get rid of any references to our filepath
         if (stderr) {
             // get the full filepath of the code file
-            const filePath = process.cwd() + "/" + filename;
+            const filePath = path.join(process.cwd(), filename);
             
             // replace all instances of that with generic "app.js" name
             const regex = new RegExp(filePath, "g");
