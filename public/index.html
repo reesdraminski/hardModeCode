@@ -18,7 +18,22 @@
             #submit { background-color: green; color: white; }
 
             .CodeMirror { height: 65%; }
-            #output { height: 30%; }
+            #output { 
+                height: 30%; 
+                width: 100%; 
+
+                font-size: 14px;
+
+                border: none;
+                overflow: auto;
+                outline: none;
+
+                -webkit-box-shadow: none;
+                -moz-box-shadow: none;
+                box-shadow: none;
+
+                resize: none;
+            }
         </style>
     </head>
 
@@ -36,7 +51,9 @@
 
         <div id="editor"></div>
 
-        <div id="output"></div>
+        <div>
+            <textarea id="output" readonly></textarea>
+        </div>
 
         <script src="codemirror/lib/codemirror.js"></script>
         <script src="codemirror/mode/javascript/javascript.js"></script>

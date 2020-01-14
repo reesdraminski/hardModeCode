@@ -33,7 +33,9 @@ function submit() {
     fetch(request)
     .then(response => response.json())
     .then(data => {
-        console.log(data);
+        document.getElementById("output").value = data.output;
+
+        document.getElementById("output").value += data.error;
     });
 }
 
@@ -64,7 +66,7 @@ document.getElementById("language").addEventListener("change", (e) => {
  * Prevent Cmd/Ctrl and Backspace key events that would allow users to edit
  * their code.
  */
-document.getElementById("editor").addEventListener("keydown", (e) => {
+document.body.addEventListener("keydown", (e) => {
     // if Cmd/Ctrl key or backspace
     if (e.metaKey || e.which == 8) {
         e.preventDefault();

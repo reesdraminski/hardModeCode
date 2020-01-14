@@ -132,6 +132,16 @@ app.post("/submit", (req, res) => {
         if (stdout[stdout.length - 1] == "\n")
             stdout = stdout.slice(0, -1);
 
+        // if there is errors, get rid of any references to our filepath
+        if (stderr) {
+            // get the full filepath of the code file
+            const filePath = process.cwd() + "/" + filename;
+            
+            // replace all instances of that with generic "app.js" name
+            const regex = new RegExp(filePath, "g");
+            stderr = stderr.replace(regex, "app.js");
+        }
+
         // delete file after its been tested
         fs.unlinkSync(filename);
 
