@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <title>hardModeCode</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+        <style>
+            .CodeMirror { 
+                /* full-screen body */
+                height: 100vh; 
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #commands { height: 5%; }
+            #commands button { padding: 10px; border-radius: 5px; }
+            #reset { background-color: red; color: white; }
+            #submit { background-color: green; color: white; }
+
+            .CodeMirror { height: 65%; }
+            #output { height: 30%; }
+        </style>
+    </head>
+
+    <body>
+        <div id="commands">
+            <select id="language">
+                <option>JavaScript</option>
+                <option>Python</option>
+            </select>
+
+            <button id="reset" onclick="reset()">Reset</button>
+
+            <button id="submit" onclick="submit()">Submit Code</button>
+        </div>
+
+        <div id="editor"></div>
+
+        <div id="output"></div>
+
+        <script src="codemirror/lib/codemirror.js"></script>
+        <script src="codemirror/mode/javascript/javascript.js"></script>
+        <script src="codemirror/mode/python/python.js"></script>
+        
+        <script src="app.js"></script>
+    </body>
+</html>
