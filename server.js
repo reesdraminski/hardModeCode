@@ -113,9 +113,11 @@ function runCode(command, args, callback) {
  * Code Submission Endpoint
  */
 app.post("/submit", (req, res) => {
-    // get data from request body
+    // get language from request body
     const language = req.body["language"];
-    const code = req.body["code"];
+
+    // get code from request body and add module export for function testings
+    const code = req.body["code"] + "\n" + "module.exports = n_fib;";
 
     // get proper file extension depending on language
     const fileExtension = getFileExtension(language);
@@ -127,6 +129,15 @@ app.post("/submit", (req, res) => {
     console.log("Saved file to " + filename);
     
     console.log("Started execution of " + filename);
+
+    // run tests with reference to file
+    let testResults;
+    try {
+        testResults = require("./n_fib.test.js")(filename);
+    } catch( error) {
+        testResults = {error: "Module loading probably."}
+    }
+    
 
     // run the file
     const runCommand = getRunCommand(language);
@@ -153,6 +164,7 @@ app.post("/submit", (req, res) => {
         // send response back to frontend
         res.send({
             output: stdout,
+            testResults: testResults,
             error: stderr
         });
     });

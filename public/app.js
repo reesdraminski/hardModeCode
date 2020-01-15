@@ -40,10 +40,35 @@ function submit() {
     fetch(request)
     .then(response => response.json())
     .then(data => {
-        document.getElementById("output").innerHTML += data.output;
+        // show console errors and output
+        document.getElementById("console").value = data.output;
+        document.getElementById("console").value += data.error;
 
-        document.getElementById("output").value += data.error;
+        // calculate test result icons
+        for (let test in data.testResults) {
+            document.getElementById("testResults").innerHTML += test + ": " + (data.testResults[test].passed ? "&#10003;" : "&#10060;") + "<br>";
+        }
     });
+}
+
+/**
+ * Open a tab in the drawer.
+ */
+function openTab(tabName) {
+    // toggle tab links
+    for (let el of document.getElementsByClassName("tablinks"))
+        el.classList.toggle("active");
+
+    // if output clicked, show output and hide testResults
+    if (tabName == "output") {
+        document.getElementById("output").style.display = "";
+        document.getElementById("testResults").style.display = "none";
+    }
+    // if testResults clicked, show testResults and hide output
+    else if (tabName == "testResults") {
+        document.getElementById("testResults").style.display = "";
+        document.getElementById("output").style.display = "none";
+    }
 }
 
 /**
