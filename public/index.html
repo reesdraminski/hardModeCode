@@ -5,26 +5,26 @@
 
         <link rel="stylesheet" href="codemirror/lib/codemirror.css">
         <style>
+            /* body */
             .CodeMirror { 
-                /* full-screen body */
-                height: 100vh; 
+                height: 65%; 
                 margin: 0;
-                overflow: hidden;
             }
+
+            code { white-space: pre-line; }
 
             #commands { height: 5%; }
             #commands button { padding: 10px; border-radius: 5px; }
             #reset { background-color: red; color: white; }
             #submit { background-color: green; color: white; }
 
-            .CodeMirror { height: 65%; }
             #output { 
                 height: 30%; 
                 width: 100%; 
 
                 font-size: 14px;
 
-                border: none;
+                /* border: none; */
                 overflow: auto;
                 outline: none;
 
@@ -49,9 +49,27 @@
             <button id="submit" onclick="submit()">Submit Code</button>
         </div>
 
+        <div id="problem">
+            <h2 style="margin-top: .5em">N-Fibonacci</h2>
+            <p>
+                The Fibonacci sequence is a series of numbers where the next number is found by adding up the two numbers before it.
+            </p>
+            <p>
+                Create a program that calculates <em>n</em><sup>th</sup> term of the sequence.
+            </p>
+            <p>
+                <b>Examples:</b><br>
+                <code>
+                    n = 6, fib_num = 5
+                    n = 10, fib_num = 34
+                </code>
+            </p>
+        </div>
+
         <div id="editor"></div>
 
         <div>
+            <h2>Output:</h2>
             <textarea id="output" readonly></textarea>
         </div>
 

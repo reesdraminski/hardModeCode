@@ -1,5 +1,6 @@
 // user-defined constants
 const PORT = 3000;
+const IP = "127.0.0.1"; // change to 0.0.0.0 for current ip
 const CODE_EXECUTION_LIMIT = 5000;
 
 // program constants
@@ -160,6 +161,6 @@ app.post("/submit", (req, res) => {
 /**
  * Start the server listening at PORT number.
  */
-server.listen(PORT, () => {
-    console.log("Server running on http://127.0.0.1:" + PORT);
+server.listen(PORT, IP, () => {
+    console.log("Server running on http://" + IP + ":" + PORT);
 });

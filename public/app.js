@@ -8,6 +8,9 @@ const editor = CodeMirror(document.getElementById("editor"), {
 // automatically focus on the editor when page loads
 editor.focus();
 
+// prevent people from accesing the right-click ("context") menu
+document.addEventListener('contextmenu', e => e.preventDefault());
+
 /**
 * Reset the value of the CodeMirror editor instance.
 */
@@ -33,7 +36,7 @@ function submit() {
     fetch(request)
     .then(response => response.json())
     .then(data => {
-        document.getElementById("output").value = data.output;
+        document.getElementById("output").innerHTML += data.output;
 
         document.getElementById("output").value += data.error;
     });
@@ -63,15 +66,18 @@ document.getElementById("language").addEventListener("change", (e) => {
 });
 
 /**
+ * Disable mouse clicking within the CodeMirror editor.
+ */
+editor.on("mousedown", (instance, e) => e.preventDefault());
+
+/**
  * Prevent Cmd/Ctrl and Backspace key events that would allow users to edit
  * their code.
  */
 document.body.addEventListener("keydown", (e) => {
     // if Cmd/Ctrl key or backspace
-    if (e.metaKey || e.which == 8) {
+    if (e.metaKey || e.which == 8 || [37, 38, 39, 40].includes(e.which)) {
         e.preventDefault();
         e.stopPropagation();
-
-        return false;
     }
 }, true);
