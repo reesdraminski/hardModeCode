@@ -3,6 +3,5 @@ A user-hostile environment meant to test your coding precision and prowess as yo
 
 ## TODO
 - Duplicate Filename Resolution
-- Improve code output UI
-- Add built-in code challenges
-- Run test cases instead of doing output comparison
+- Add built-in code challenges and push them through sockets
+- Parallelize unit tests
