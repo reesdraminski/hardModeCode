@@ -15,7 +15,11 @@ document.addEventListener('contextmenu', e => e.preventDefault());
 * Reset the value of the CodeMirror editor instance.
 */
 function reset() {
+    // overwrite editor previous value with nothing
     editor.setValue("");
+
+    // focus back on the editor
+    editor.focus();
 }
 
 /**
@@ -68,7 +72,13 @@ document.getElementById("language").addEventListener("change", (e) => {
 /**
  * Disable mouse clicking within the CodeMirror editor.
  */
-editor.on("mousedown", (instance, e) => e.preventDefault());
+editor.on("mousedown", (instance, e) => {
+    // focus on the editor when it get's clicked
+    editor.focus();
+
+    // do not allow any other normal click behaviors to happen
+    e.preventDefault();
+});
 
 /**
  * Prevent Cmd/Ctrl and Backspace key events that would allow users to edit
