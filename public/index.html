@@ -79,24 +79,21 @@
                 <!-- <option>Python</option> -->
             </select>
 
-            <button id="reset" onclick="reset()">Reset</button>
+            <button id="reset">Reset</button>
 
-            <button id="submit" onclick="submit()">Submit Code</button>
+            <button id="submit">Submit Code</button>
         </div>
 
         <div id="editor"></div>
 
         <div id="results">
             <div class="tab">
-                <button class="tablinks active" onclick="openTab('output')">Output</button>
-                <!-- <button class="tablinks" onclick="openTab('testResults')">Test Results</button> -->
+                <button class="tablinks active">Output</button>
             </div>
     
             <div id="output" class="tabcontent">
                 <textarea id="console" readonly></textarea>
             </div>
-    
-            <div id="testResults" class="tabcontent" style="display: none;"></div>
         </div>
 
         <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>

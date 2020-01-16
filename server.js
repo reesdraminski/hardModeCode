@@ -64,30 +64,18 @@ app.post("/submit", (req, res) => {
     const filename = new Date().getTime() + fileExtension;
     fs.writeFileSync(filename, code);
 
-    console.log("Saved file to " + filename);
+    console.log("\nSaved file to " + filename);
 
-    const runCommand = getRunCommand(language);
-    runCode(runCommand, [filename], (stdout, stderr, exitCode) => {
-        // remove trailing whitespace that results from reading the output stream
-        if (stdout[stdout.length - 1] == "\n")
-            stdout = stdout.slice(0, -1);
-
-        // if there is errors, get rid of any references to our filepath
-        if (stderr) {
-            // get the full filepath of the code file
-            const filePath = path.join(process.cwd(), testPath);
-            
-            // replace all instances of that with generic "app.js" name
-            const regex = new RegExp(filePath, "g");
-            stderr = stderr.replace(regex, "app.js");
-        }
-    });
+    console.log("Commencing tests.");
     
+    // create arguments for mocha command
     const testPath = path.join("problems", problem, problem + ".test.js");
     const fileToTest = "--totest " + filename;
 
     // run the file
-    runCode("mocha", [testPath, fileToTest], (stdout, stderr, exitCode) => {
+    runCommand("mocha", [testPath, fileToTest], (stdout, stderr, exitCode) => {
+        console.log("Testing process exited with exit code", exitCode + ".");
+
         // remove trailing whitespace that results from reading the output stream
         stdout = stdout.trim();
 
@@ -129,21 +117,6 @@ function getFileExtension(language) {
 }
 
 /**
-* Given a language, it will return the command required to excecute a file of 
-* that language.
-* 
-* @param {String} language 
-*/
-function getRunCommand(language) {
-    switch (language) {
-        case JAVASCRIPT:
-            return "node";
-        case PYTHON:
-            return "python3";
-    }
-}
-
-/**
 * This will execute code and provide the output, error, and exit code
 * via a callback function.
 * 
@@ -151,7 +124,7 @@ function getRunCommand(language) {
 * @param {[String]} args 
 * @param {Function} callback 
 */
-function runCode(command, args, callback) {
+function runCommand(command, args, callback) {
     // start process
     const child = child_process.spawn(command, args);
 

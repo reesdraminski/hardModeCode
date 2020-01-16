@@ -1,7 +1,7 @@
 ## N-Fibonacci
 The Fibonacci sequence is a series of numbers where the next number is found by adding up the two numbers before it.
 
-Create a function that calculates the _n_^th^ term of the sequence.
+Create a function that calculates the _n_<sup>th</sup> term of the sequence.
 
 **Function Header:**
 ```javascript

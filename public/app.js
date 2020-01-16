@@ -1,30 +1,37 @@
-// create a CodeMirror instance
-const editor = CodeMirror(document.getElementById("editor"), {
-    mode: "javascript",
-    lineNumbers: true,
-    indentUnit: 4
-});
+/**
+* Setup the web application.
+*/
+(function setup() {
+    // display code problem
+    getProblem();
 
-// get problem text and generate HTML from the MD
-fetch("/problem")
-.then(response => response.json())
-.then(data => {
-    const converter = new showdown.Converter();
-    converter.setFlavor('github');
+    // create a CodeMirror instance
+    const editor = CodeMirror(document.getElementById("editor"), {
+        mode: "javascript",
+        lineNumbers: true,
+        indentUnit: 4
+    });
 
-    document.getElementById("problem").innerHTML = converter.makeHtml(data.problem);
-});
+    // automatically focus on the editor when page loads
+    editor.focus();
 
-// automatically focus on the editor when page loads
-editor.focus();
+    // disable mouse clicks on editor
+    disableEditorMouseClicks(editor);
 
-// prevent people from accesing the right-click ("context") menu
-document.addEventListener('contextmenu', e => e.preventDefault());
+    // prevent user from accesing the right-click ("context") menu.
+    disableContextMenu();
+
+    // disable keys that would allow user to edit their input
+    disableEditingKeys();
+
+    document.getElementById("reset").onclick = () => reset(editor);
+    document.getElementById("submit").onclick = () => submit(editor);
+})();
 
 /**
 * Reset the value of the CodeMirror editor instance.
 */
-function reset() {
+function reset(editor) {
     // overwrite editor previous value with nothing
     editor.setValue("");
 
@@ -33,9 +40,9 @@ function reset() {
 }
 
 /**
- * Submit the code to the server to be tested.
- */
-function submit() {
+* Submit the code to the server to be tested.
+*/
+function submit(editor) {
     // get code from CodeMirror editor
     const code = editor.getValue();
     const mode = editor.getOption("mode");
@@ -63,23 +70,51 @@ function submit() {
 }
 
 /**
- * Open a tab in the drawer.
- */
-function openTab(tabName) {
-    // toggle tab links
-    for (let el of document.getElementsByClassName("tablinks"))
-        el.classList.toggle("active");
+* Get problem text and generate HTML from the MD
+*/
+function getProblem() {
+    fetch("/problem")
+    .then(response => response.json())
+    .then(data => {
+        const converter = new showdown.Converter();
+        converter.setFlavor('github');
 
-    // if output clicked, show output and hide testResults
-    if (tabName == "output") {
-        document.getElementById("output").style.display = "";
-        document.getElementById("testResults").style.display = "none";
-    }
-    // if testResults clicked, show testResults and hide output
-    else if (tabName == "testResults") {
-        document.getElementById("testResults").style.display = "";
-        document.getElementById("output").style.display = "none";
-    }
+        document.getElementById("problem").innerHTML = converter.makeHtml(data.problem);
+    });
+}
+
+/**
+* Prevent user from accesing the right-click ("context") menu.
+*/
+function disableContextMenu() {
+    document.addEventListener('contextmenu', e => e.preventDefault());
+}
+
+/**
+* Prevent Cmd/Ctrl and Backspace key events that would allow users to edit
+* their code.
+*/
+function disableEditingKeys() {
+    document.body.addEventListener("keydown", (e) => {
+        // if Cmd/Ctrl key or backspace
+        if (e.metaKey || e.which == 8 || [37, 38, 39, 40].includes(e.which)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, true);
+}
+
+/**
+* Disable mouse clicking within the CodeMirror editor.
+*/
+function disableEditorMouseClicks(editor) {
+    editor.on("mousedown", (instance, e) => {
+        // focus on the editor when it get's clicked
+        editor.focus();
+
+        // do not allow any other normal click behaviors to happen
+        e.preventDefault();
+    });
 }
 
 /**
@@ -104,26 +139,3 @@ document.getElementById("language").addEventListener("change", (e) => {
     // change the CodeMirror instance mode
     editor.setOption("mode", mode);
 });
-
-/**
- * Disable mouse clicking within the CodeMirror editor.
- */
-editor.on("mousedown", (instance, e) => {
-    // focus on the editor when it get's clicked
-    editor.focus();
-
-    // do not allow any other normal click behaviors to happen
-    e.preventDefault();
-});
-
-/**
- * Prevent Cmd/Ctrl and Backspace key events that would allow users to edit
- * their code.
- */
-document.body.addEventListener("keydown", (e) => {
-    // if Cmd/Ctrl key or backspace
-    if (e.metaKey || e.which == 8 || [37, 38, 39, 40].includes(e.which)) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-}, true);
