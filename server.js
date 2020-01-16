@@ -1,7 +1,6 @@
 // user-defined constants
 const PORT = 3000;
 const IP = "127.0.0.1"; // change to 0.0.0.0 for current ip
-const problem = "n_fib";
 
 // program constants
 const JAVASCRIPT = "javascript";
@@ -11,7 +10,6 @@ const PYTHON = "python";
 const path = require('path');
 const fs = require('fs');
 const child_process = require('child_process');
-const Mocha = require('mocha');
 
 // express imports to create server
 const express = require("express");
@@ -38,12 +36,35 @@ app.get("/", (req, res) => {
 });
 
 /**
+ * Send all the problem names.
+ */
+const problems = fs.readdirSync("problems");
+app.get("/problems", (req, res) => {
+    res.send({
+        problems: problems
+    })
+});
+
+/**
  * Code Problem Text Endpoint
  */
-app.get("/problem", (req, res) => {
+let cachedProblems = {};
+app.get("/problem/:name", (req, res) => {
+    const problem = req.params.name;
+
+    // cache problems so don't have to read file on each request which could be blocking
+    let problemText;
+    if (problem in cachedProblems)
+        problemText = cachedProblems[problem];
+    else {
+        problemText = fs.readFileSync(path.join("problems", problem, problem + ".md"), "utf-8").toString();
+
+        cachedProblems[problem] = problemText;
+    }
+        
     // send text of problem markdown file
     res.send({
-        problem: fs.readFileSync(path.join("problems", problem, problem + ".md"), "utf-8").toString()
+        problem: problemText
     });
 });
 
@@ -53,9 +74,10 @@ app.get("/problem", (req, res) => {
 app.post("/submit", (req, res) => {
     // get language from request body
     const language = req.body["language"];
+    const problem = req.body["problem"];
 
     // get code from request body and add module export for function testings
-    const code = req.body["code"] + "\n" + "module.exports = n_fib;";
+    const code = req.body["code"] + "\n" + "module.exports = " + problem + ";";
 
     // get proper file extension depending on language
     const fileExtension = getFileExtension(language);
@@ -97,7 +119,8 @@ app.post("/submit", (req, res) => {
         // send response back to frontend
         res.send({
             output: stdout,
-            error: stderr
+            error: stderr,
+            solved: !exitCode
         });
     });
 });

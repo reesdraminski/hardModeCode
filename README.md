@@ -10,8 +10,5 @@ This would be a competitive programming event where multiple users would connect
 
 ## TODO
 - Duplicate Filename Resolution
-- Push problems through sockets to competitors?
 - Add Python and C++ support
-- Keep a timer and count of resets to calculate score
-- Determine problem is solved when all tests are passed
 - Problem code hightlighting?

@@ -1,6 +1,8 @@
 // flag to get file from
 const FLAG = "totest";
 
+const NUM_TESTS = 5;
+
 // import mocha/chai testing functions
 const assert = require("chai").assert;
 
@@ -11,8 +13,7 @@ const n_fib = require("../../" + fileName);
 
 // the right answer since the secret tests are random numbers to prevent hardcoding
 function calculateAnswer(n) {
-    if (n === 0) return 0;
-    if (n == 1) return 1;
+    if (n <= 1) return n;
 
     return calculateAnswer(n - 2) + calculateAnswer(n - 1);
 }
@@ -41,5 +42,17 @@ describe("#n_fib()", function() {
         const n = 6 + Math.ceil(Math.random() * 20);
 
         assert.equal(n_fib(n), calculateAnswer(n));
+    });
+
+    let numRun = 0, numPassed = 0;
+    afterEach(function() {
+        ++numRun;
+
+        if (this.currentTest.state === 'failed') {}
+        else
+            if (++numPassed == NUM_TESTS) 
+                process.exit(0);
+            else if (numRun == NUM_TESTS)
+                process.exit(1);
     });
 });

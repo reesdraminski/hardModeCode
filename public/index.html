@@ -67,10 +67,25 @@
                 border: 1px solid #ccc;
                 border-top: none;
             }
+
+            #problemCarousel { height: 2em; margin-bottom: 1em; }
+
+            .problemButton {
+                display: inline-block;
+                padding: 10px;
+                border-radius: 5px;
+                margin-right: 10px;
+                box-shadow: 0 0 10px #e6e6e6;
+            }
+
+            .problemButton.active {box-shadow: 0px 0px 2px 1px purple;}            
         </style>
     </head>
 
     <body>
+        <div id="problemCarousel">
+        </div>
+
         <div id="problem"></div>
 
         <div id="commands">
@@ -82,6 +97,9 @@
             <button id="reset">Reset</button>
 
             <button id="submit">Submit Code</button>
+
+            <b>Stopwatch: </b><span id="stopwatch">00:00</span>
+            <b>Number of Resets: </b><span id="numResets">0</span>
         </div>
 
         <div id="editor"></div>
