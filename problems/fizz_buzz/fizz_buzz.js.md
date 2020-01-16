@@ -7,7 +7,7 @@ function fizz_buzz(n) {}
 ```
 
 **Examples:**
-> fizzBuzz(5) => "Buzz"
-> fizzBuzz(7) => 7
-> fizzBuzz(15) => "FizzBuzz"
-> fizzBuzz(18) => "Fizz"
+> fizz_buzz(5) => "Buzz"
+> fizz_buzz(7) => 7
+> fizfizz_buzzzBuzz(15) => "FizzBuzz"
+> fizz_buzz(18) => "Fizz"
