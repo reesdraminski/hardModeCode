@@ -4,4 +4,4 @@ A user-hostile environment meant to test your coding precision and prowess as yo
 ## TODO
 - Duplicate Filename Resolution
 - Add built-in code challenges and push them through sockets
-- Parallelize unit tests
+- Add Python and C++ support

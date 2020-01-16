@@ -5,6 +5,16 @@ const editor = CodeMirror(document.getElementById("editor"), {
     indentUnit: 4
 });
 
+// get problem text and generate HTML from the MD
+fetch("/problem")
+.then(response => response.json())
+.then(data => {
+    const converter = new showdown.Converter();
+    converter.setFlavor('github');
+
+    document.getElementById("problem").innerHTML = converter.makeHtml(data.problem);
+});
+
 // automatically focus on the editor when page loads
 editor.focus();
 
@@ -45,9 +55,10 @@ function submit() {
         document.getElementById("console").value += data.error;
 
         // calculate test result icons
-        for (let test in data.testResults) {
-            document.getElementById("testResults").innerHTML += test + ": " + (data.testResults[test].passed ? "&#10003;" : "&#10060;") + "<br>";
-        }
+        // document.getElementById("testResults").innerHTML = "";
+        // for (let test in data.testResults) {
+        //     document.getElementById("testResults").innerHTML += test + ": " + (data.testResults[test].passed ? "&#10003;" : "&#10060;") + "<br>";
+        // }
     });
 }
 

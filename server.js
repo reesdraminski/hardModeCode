@@ -1,7 +1,7 @@
 // user-defined constants
 const PORT = 3000;
 const IP = "127.0.0.1"; // change to 0.0.0.0 for current ip
-const CODE_EXECUTION_LIMIT = 5000;
+const problem = "n_fib";
 
 // program constants
 const JAVASCRIPT = "javascript";
@@ -11,6 +11,7 @@ const PYTHON = "python";
 const path = require('path');
 const fs = require('fs');
 const child_process = require('child_process');
+const Mocha = require('mocha');
 
 // express imports to create server
 const express = require("express");
@@ -23,6 +24,13 @@ app.use(express.static("public"));
 app.use(express.json());
 
 /**
+* Start the server listening at PORT number.
+*/
+server.listen(PORT, IP, () => {
+    console.log("Server running on http://" + IP + ":" + PORT);
+});
+
+/**
  * Serve the web application.
  */
 app.get("/", (req, res) => {
@@ -30,84 +38,14 @@ app.get("/", (req, res) => {
 });
 
 /**
- * Given a language, it will return the file extension of that language.
- * 
- * @param {String} language 
+ * Code Problem Text Endpoint
  */
-function getFileExtension(language) {
-    switch (language) {
-        case JAVASCRIPT:
-            return ".js";
-        case PYTHON:
-            return ".py";
-    }
-}
-
-/**
- * Given a language, it will return the command required to excecute a file of 
- * that language.
- * 
- * @param {String} language 
- */
-function getRunCommand(language) {
-    switch (language) {
-        case JAVASCRIPT:
-            return "node";
-        case PYTHON:
-            return "python3";
-    }
-}
-
-/**
- * This will execute code and provide the output, error, and exit code
- * via a callback function.
- * 
- * @param {String} command 
- * @param {[String]} args 
- * @param {Function} callback 
- */
-function runCode(command, args, callback) {
-    console.log("Starting code execution.");
-
-    // start process
-    const child = child_process.spawn(command, args);
-
-    // kill process if goes over code execution limit
-    const timeout = setTimeout(() => {
-        console.log("Code execution killed.");
-
-        // kill child process
-        child.kill("SIGINT");
-
-        // use callback to give data
-        callback(stdout, stderr, -1);
-    }, CODE_EXECUTION_LIMIT);
-
-    // get the output of code
-    let stdout = "";
-    child.stdout.setEncoding("utf8");
-    child.stdout.on("data", function(data) {
-        stdout += data.toString();
+app.get("/problem", (req, res) => {
+    // send text of problem markdown file
+    res.send({
+        problem: fs.readFileSync(path.join("problems", problem, problem + ".md"), "utf-8").toString()
     });
-
-    // get any errors from code
-    let stderr = "";
-    child.stderr.setEncoding("utf8");
-    child.stderr.on("data", function(data) {
-        stderr += data.toString();
-    });
-
-    // when the child process closes naturally
-    child.on("close", function(code) {
-        console.log("Code execution finished.");
-
-        // clear the timeout so it doesn't try to kill the function
-        clearTimeout(timeout);
-
-        // use callback to give data
-        callback(stdout, stderr, code);
-    });
-}
+});
 
 /**
  * Code Submission Endpoint
@@ -127,19 +65,7 @@ app.post("/submit", (req, res) => {
     fs.writeFileSync(filename, code);
 
     console.log("Saved file to " + filename);
-    
-    console.log("Started execution of " + filename);
 
-    // run tests with reference to file
-    let testResults;
-    try {
-        testResults = require("./n_fib.test.js")(filename);
-    } catch( error) {
-        testResults = {error: "Module loading probably."}
-    }
-    
-
-    // run the file
     const runCommand = getRunCommand(language);
     runCode(runCommand, [filename], (stdout, stderr, exitCode) => {
         // remove trailing whitespace that results from reading the output stream
@@ -149,7 +75,26 @@ app.post("/submit", (req, res) => {
         // if there is errors, get rid of any references to our filepath
         if (stderr) {
             // get the full filepath of the code file
-            const filePath = path.join(process.cwd(), filename);
+            const filePath = path.join(process.cwd(), testPath);
+            
+            // replace all instances of that with generic "app.js" name
+            const regex = new RegExp(filePath, "g");
+            stderr = stderr.replace(regex, "app.js");
+        }
+    });
+    
+    const testPath = path.join("problems", problem, problem + ".test.js");
+    const fileToTest = "--totest " + filename;
+
+    // run the file
+    runCode("mocha", [testPath, fileToTest], (stdout, stderr, exitCode) => {
+        // remove trailing whitespace that results from reading the output stream
+        stdout = stdout.trim();
+
+        // if there is errors, get rid of any references to our filepath
+        if (stderr) {
+            // get the full filepath of the code file
+            const filePath = path.join(process.cwd(), testPath);
             
             // replace all instances of that with generic "app.js" name
             const regex = new RegExp(filePath, "g");
@@ -164,15 +109,69 @@ app.post("/submit", (req, res) => {
         // send response back to frontend
         res.send({
             output: stdout,
-            testResults: testResults,
             error: stderr
         });
     });
 });
 
 /**
- * Start the server listening at PORT number.
- */
-server.listen(PORT, IP, () => {
-    console.log("Server running on http://" + IP + ":" + PORT);
-});
+* Given a language, it will return the file extension of that language.
+* 
+* @param {String} language 
+*/
+function getFileExtension(language) {
+    switch (language) {
+        case JAVASCRIPT:
+            return ".js";
+        case PYTHON:
+            return ".py";
+    }
+}
+
+/**
+* Given a language, it will return the command required to excecute a file of 
+* that language.
+* 
+* @param {String} language 
+*/
+function getRunCommand(language) {
+    switch (language) {
+        case JAVASCRIPT:
+            return "node";
+        case PYTHON:
+            return "python3";
+    }
+}
+
+/**
+* This will execute code and provide the output, error, and exit code
+* via a callback function.
+* 
+* @param {String} command 
+* @param {[String]} args 
+* @param {Function} callback 
+*/
+function runCode(command, args, callback) {
+    // start process
+    const child = child_process.spawn(command, args);
+
+    // get the output of code
+    let stdout = "";
+    child.stdout.setEncoding("utf8");
+    child.stdout.on("data", function(data) {
+        stdout += data.toString();
+    });
+
+    // get any errors from code
+    let stderr = "";
+    child.stderr.setEncoding("utf8");
+    child.stderr.on("data", function(data) {
+        stderr += data.toString();
+    });
+
+    // when the child process closes naturally
+    child.on("close", function(code) {
+        // use callback to give data
+        callback(stdout, stderr, code);
+    });
+}

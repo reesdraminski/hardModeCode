@@ -5,13 +5,9 @@
 
         <link rel="stylesheet" href="codemirror/lib/codemirror.css">
         <style>
-            /* body */
-            .CodeMirror { 
-                height: 65%; 
-                margin: 0;
-            }
+            .CodeMirror {  height: 65%;  margin: 0; }
 
-            code { white-space: pre-line; }
+            #problem { font-family: sans-serif; }
 
             #commands { height: 5%; }
             #commands button { padding: 10px; border-radius: 5px; }
@@ -24,7 +20,6 @@
 
                 font-size: 14px;
 
-                /* border: none; */
                 overflow: auto;
                 outline: none;
 
@@ -76,10 +71,12 @@
     </head>
 
     <body>
+        <div id="problem"></div>
+
         <div id="commands">
             <select id="language">
                 <option>JavaScript</option>
-                <option>Python</option>
+                <!-- <option>Python</option> -->
             </select>
 
             <button id="reset" onclick="reset()">Reset</button>
@@ -87,29 +84,12 @@
             <button id="submit" onclick="submit()">Submit Code</button>
         </div>
 
-        <div id="problem">
-            <h2 style="margin-top: .5em">N-Fibonacci</h2>
-            <p>
-                The Fibonacci sequence is a series of numbers where the next number is found by adding up the two numbers before it.
-            </p>
-            <p>
-                Create a program that calculates <em>n</em><sup>th</sup> term of the sequence.
-            </p>
-            <p>
-                <b>Examples:</b><br>
-                <code>
-                    n = 6, fib_num = 5
-                    n = 10, fib_num = 34
-                </code>
-            </p>
-        </div>
-
         <div id="editor"></div>
 
         <div id="results">
             <div class="tab">
                 <button class="tablinks active" onclick="openTab('output')">Output</button>
-                <button class="tablinks" onclick="openTab('testResults')">Test Results</button>
+                <!-- <button class="tablinks" onclick="openTab('testResults')">Test Results</button> -->
             </div>
     
             <div id="output" class="tabcontent">
@@ -118,6 +98,8 @@
     
             <div id="testResults" class="tabcontent" style="display: none;"></div>
         </div>
+
+        <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
 
         <script src="codemirror/lib/codemirror.js"></script>
         <script src="codemirror/mode/javascript/javascript.js"></script>
