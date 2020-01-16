@@ -11,4 +11,4 @@ function n_fib(n) {}
 **Examples:**
 > n_fib(1) = 1
 > n_fib(6) = 5
-> n_fib(10) = 34
+> n_fib(10) = 55
