@@ -63,7 +63,7 @@ function populateCarousel(editor) {
                 e.target.classList.toggle("active");
 
                 // get problem text that we clicked
-                getProblem(e.target.innerHTML); 
+                getProblem(editor, e.target.innerHTML); 
             };
 
             // add span to carousel
@@ -127,7 +127,7 @@ function submit(editor) {
 /**
 * Get problem text and generate HTML from the MD
 */
-function getProblem(problem) {
+function getProblem(editor, problem) {
     // reset number of resets per problem
     numResets = 0;
 
@@ -135,7 +135,8 @@ function getProblem(problem) {
     timer = 0;
 
     // get the problem text
-    fetch("/problem/" + problem)
+    const language = editor.getOption("mode");
+    fetch("/problem/" + problem + "/" + language)
     .then(response => response.json())
     .then(data => {
         // create a markdown to HTML converter to generate GitHub Flavored Markdown

@@ -49,17 +49,19 @@ app.get("/problems", (req, res) => {
  * Code Problem Text Endpoint
  */
 let cachedProblems = {};
-app.get("/problem/:name", (req, res) => {
+app.get("/problem/:name/:lang", (req, res) => {
+    // get problem name and language the problem is from request
     const problem = req.params.name;
-
+    const language = req.params.lang;
+    
     // cache problems so don't have to read file on each request which could be blocking
     let problemText;
     if (problem in cachedProblems)
-        problemText = cachedProblems[problem];
+        problemText = cachedProblems[problem + getFileExtension(language)];
     else {
-        problemText = fs.readFileSync(path.join("problems", problem, problem + ".md"), "utf-8").toString();
+        problemText = fs.readFileSync(path.join("problems", problem, problem + getFileExtension(language) + ".md"), "utf-8").toString();
 
-        cachedProblems[problem] = problemText;
+        cachedProblems[problem + getFileExtension(language)] = problemText;
     }
         
     // send text of problem markdown file
